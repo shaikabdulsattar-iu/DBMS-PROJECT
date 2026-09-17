@@ -1,0 +1,477 @@
+-- =========================================================
+-- SOFTWARE MANAGEMENT SYSTEM
+-- DBMS PROJECT - SQLITE
+-- =========================================================
+
+-- 1. DELETE OLD TABLES IF THEY ALREADY EXIST
+DROP TABLE IF EXISTS Resource;
+DROP TABLE IF EXISTS Milestone;
+DROP TABLE IF EXISTS Team;
+DROP TABLE IF EXISTS Task;
+DROP TABLE IF EXISTS Project;
+DROP TABLE IF EXISTS Client;
+DROP TABLE IF EXISTS Employee;
+DROP TABLE IF EXISTS Department;
+
+
+-- =========================================================
+-- 2. CREATE DEPARTMENT TABLE
+-- =========================================================
+
+CREATE TABLE Department (
+    Department_ID INTEGER PRIMARY KEY,
+    Department_Name VARCHAR(100) NOT NULL,
+    Location VARCHAR(100)
+);
+
+
+-- =========================================================
+-- 3. CREATE EMPLOYEE TABLE
+-- =========================================================
+
+CREATE TABLE Employee (
+    Employee_ID INTEGER PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Phone VARCHAR(15),
+    Role VARCHAR(50),
+    Department_ID INTEGER,
+
+    FOREIGN KEY (Department_ID)
+        REFERENCES Department(Department_ID)
+);
+
+
+-- =========================================================
+-- 4. CREATE CLIENT TABLE
+-- =========================================================
+
+CREATE TABLE Client (
+    Client_ID INTEGER PRIMARY KEY,
+    Client_Name VARCHAR(100) NOT NULL,
+    Contact VARCHAR(15),
+    Email VARCHAR(100) UNIQUE,
+    Address VARCHAR(200)
+);
+
+
+-- =========================================================
+-- 5. CREATE PROJECT TABLE
+-- =========================================================
+
+CREATE TABLE Project (
+    Project_ID INTEGER PRIMARY KEY,
+    Project_Name VARCHAR(100) NOT NULL,
+    Client_ID INTEGER,
+    Start_Date DATE,
+    End_Date DATE,
+    Status VARCHAR(50),
+
+    FOREIGN KEY (Client_ID)
+        REFERENCES Client(Client_ID)
+);
+
+
+-- =========================================================
+-- 6. CREATE TASK TABLE
+-- =========================================================
+
+CREATE TABLE Task (
+    Task_ID INTEGER PRIMARY KEY,
+    Project_ID INTEGER,
+    Task_Name VARCHAR(150) NOT NULL,
+    Assigned_To INTEGER,
+    Status VARCHAR(50),
+    Deadline DATE,
+
+    FOREIGN KEY (Project_ID)
+        REFERENCES Project(Project_ID),
+
+    FOREIGN KEY (Assigned_To)
+        REFERENCES Employee(Employee_ID)
+);
+
+
+-- =========================================================
+-- 7. CREATE TEAM TABLE
+-- =========================================================
+
+CREATE TABLE Team (
+    Team_ID INTEGER PRIMARY KEY,
+    Team_Name VARCHAR(100) NOT NULL,
+    Project_ID INTEGER UNIQUE,
+
+    FOREIGN KEY (Project_ID)
+        REFERENCES Project(Project_ID)
+);
+
+
+-- =========================================================
+-- 8. CREATE MILESTONE TABLE
+-- =========================================================
+
+CREATE TABLE Milestone (
+    Milestone_ID INTEGER PRIMARY KEY,
+    Project_ID INTEGER,
+    Milestone_Name VARCHAR(150) NOT NULL,
+    Due_Date DATE,
+    Status VARCHAR(50),
+
+    FOREIGN KEY (Project_ID)
+        REFERENCES Project(Project_ID)
+);
+
+
+-- =========================================================
+-- 9. CREATE RESOURCE TABLE
+-- =========================================================
+
+CREATE TABLE Resource (
+    Resource_ID INTEGER PRIMARY KEY,
+    Resource_Name VARCHAR(100) NOT NULL,
+    Type VARCHAR(50),
+    Availability VARCHAR(50),
+    Team_ID INTEGER,
+
+    FOREIGN KEY (Team_ID)
+        REFERENCES Team(Team_ID)
+);
+
+
+-- =========================================================
+-- 10. INSERT DEPARTMENT DATA
+-- =========================================================
+
+INSERT INTO Department
+VALUES
+(1, 'Software Development', 'Hyderabad'),
+(2, 'Testing', 'Vijayawada'),
+(3, 'Artificial Intelligence', 'Visakhapatnam'),
+(4, 'Human Resources', 'Guntur');
+
+
+-- =========================================================
+-- 11. INSERT EMPLOYEE DATA
+-- =========================================================
+
+INSERT INTO Employee
+VALUES
+(101, 'Rahul', 'rahul@gmail.com', '9876543210', 'Developer', 1),
+(102, 'Priya', 'priya@gmail.com', '9876543211', 'Tester', 2),
+(103, 'Arjun', 'arjun@gmail.com', '9876543212', 'AI Engineer', 3),
+(104, 'Sneha', 'sneha@gmail.com', '9876543213', 'Developer', 1),
+(105, 'Kiran', 'kiran@gmail.com', '9876543214', 'HR Manager', 4);
+
+
+-- =========================================================
+-- 12. INSERT CLIENT DATA
+-- =========================================================
+
+INSERT INTO Client
+VALUES
+(201, 'ABC Technologies', '9000000001',
+ 'abc@gmail.com', 'Hyderabad'),
+
+(202, 'XYZ Solutions', '9000000002',
+ 'xyz@gmail.com', 'Bangalore'),
+
+(203, 'Global Soft', '9000000003',
+ 'global@gmail.com', 'Chennai');
+
+
+-- =========================================================
+-- 13. INSERT PROJECT DATA
+-- =========================================================
+
+INSERT INTO Project
+VALUES
+(301, 'Bank Management System', 201,
+ '2026-01-10', '2026-06-30', 'Completed'),
+
+(302, 'Hospital Management System', 202,
+ '2026-02-15', '2026-08-30', 'In Progress'),
+
+(303, 'AI Chatbot', 203,
+ '2026-03-01', '2026-09-30', 'In Progress');
+
+
+-- =========================================================
+-- 14. INSERT TASK DATA
+-- =========================================================
+
+INSERT INTO Task
+VALUES
+(401, 301, 'Database Design', 101,
+ 'Completed', '2026-02-10'),
+
+(402, 301, 'Frontend Development', 104,
+ 'Completed', '2026-04-15'),
+
+(403, 302, 'Requirement Analysis', 102,
+ 'Completed', '2026-03-20'),
+
+(404, 302, 'Testing', 102,
+ 'In Progress', '2026-08-15'),
+
+(405, 303, 'AI Model Development', 103,
+ 'In Progress', '2026-07-30');
+
+
+-- =========================================================
+-- 15. INSERT TEAM DATA
+-- =========================================================
+
+INSERT INTO Team
+VALUES
+(501, 'Bank Project Team', 301),
+(502, 'Hospital Project Team', 302),
+(503, 'AI Project Team', 303);
+
+
+-- =========================================================
+-- 16. INSERT MILESTONE DATA
+-- =========================================================
+
+INSERT INTO Milestone
+VALUES
+(601, 301, 'Database Completed',
+ '2026-02-10', 'Completed'),
+
+(602, 301, 'Final Testing',
+ '2026-05-20', 'Completed'),
+
+(603, 302, 'Prototype Completed',
+ '2026-05-30', 'Completed'),
+
+(604, 303, 'AI Model Ready',
+ '2026-08-15', 'In Progress');
+
+
+-- =========================================================
+-- 17. INSERT RESOURCE DATA
+-- =========================================================
+
+INSERT INTO Resource
+VALUES
+(701, 'Development Laptop', 'Hardware', 'Available', 501),
+
+(702, 'Testing Server', 'Server', 'Available', 502),
+
+(703, 'GPU Server', 'Hardware', 'In Use', 503),
+
+(704, 'Database Server', 'Server', 'Available', 501);
+
+
+-- =========================================================
+-- 18. DISPLAY ALL TABLES
+-- =========================================================
+
+SELECT * FROM Department;
+
+SELECT * FROM Employee;
+
+SELECT * FROM Client;
+
+SELECT * FROM Project;
+
+SELECT * FROM Task;
+
+SELECT * FROM Team;
+
+SELECT * FROM Milestone;
+
+SELECT * FROM Resource;
+
+
+-- =========================================================
+-- 19. EMPLOYEE + DEPARTMENT
+-- =========================================================
+
+SELECT
+    E.Employee_ID,
+    E.Name,
+    E.Role,
+    D.Department_Name
+FROM Employee E
+JOIN Department D
+ON E.Department_ID = D.Department_ID;
+
+
+-- =========================================================
+-- 20. PROJECT + CLIENT
+-- =========================================================
+
+SELECT
+    P.Project_ID,
+    P.Project_Name,
+    C.Client_Name,
+    P.Status
+FROM Project P
+JOIN Client C
+ON P.Client_ID = C.Client_ID;
+
+
+-- =========================================================
+-- 21. TASK + EMPLOYEE
+-- =========================================================
+
+SELECT
+    T.Task_ID,
+    T.Task_Name,
+    E.Name AS Employee_Name,
+    T.Status,
+    T.Deadline
+FROM Task T
+JOIN Employee E
+ON T.Assigned_To = E.Employee_ID;
+
+
+-- =========================================================
+-- 22. PROJECT + TEAM
+-- =========================================================
+
+SELECT
+    P.Project_Name,
+    T.Team_Name
+FROM Project P
+JOIN Team T
+ON P.Project_ID = T.Project_ID;
+
+
+-- =========================================================
+-- 23. PROJECT + MILESTONE
+-- =========================================================
+
+SELECT
+    P.Project_Name,
+    M.Milestone_Name,
+    M.Due_Date,
+    M.Status
+FROM Project P
+JOIN Milestone M
+ON P.Project_ID = M.Project_ID;
+
+
+-- =========================================================
+-- 24. COUNT EMPLOYEES
+-- =========================================================
+
+SELECT COUNT(*) AS Total_Employees
+FROM Employee;
+
+
+-- =========================================================
+-- 25. COUNT PROJECTS
+-- =========================================================
+
+SELECT COUNT(*) AS Total_Projects
+FROM Project;
+
+
+-- =========================================================
+-- 26. TASK COUNT FOR EACH PROJECT
+-- =========================================================
+
+SELECT
+    Project_ID,
+    COUNT(*) AS Total_Tasks
+FROM Task
+GROUP BY Project_ID;
+
+
+-- =========================================================
+-- 27. EMPLOYEE COUNT FOR EACH DEPARTMENT
+-- =========================================================
+
+SELECT
+    Department_ID,
+    COUNT(*) AS Employee_Count
+FROM Employee
+GROUP BY Department_ID;
+
+
+-- =========================================================
+-- 28. COMPLETED PROJECTS
+-- =========================================================
+
+SELECT *
+FROM Project
+WHERE Status = 'Completed';
+
+
+-- =========================================================
+-- 29. PROJECTS IN PROGRESS
+-- =========================================================
+
+SELECT *
+FROM Project
+WHERE Status = 'In Progress';
+
+
+-- =========================================================
+-- 30. EMPLOYEES IN SOFTWARE DEVELOPMENT
+-- =========================================================
+
+SELECT
+    E.Name,
+    E.Role
+FROM Employee E
+JOIN Department D
+ON E.Department_ID = D.Department_ID
+WHERE D.Department_Name = 'Software Development';
+
+
+-- =========================================================
+-- 31. RESOURCES IN USE
+-- =========================================================
+
+SELECT *
+FROM Resource
+WHERE Availability = 'In Use';
+
+
+-- =========================================================
+-- 32. PROJECT WITH NUMBER OF TASKS
+-- =========================================================
+
+SELECT
+    P.Project_Name,
+    COUNT(T.Task_ID) AS Total_Tasks
+FROM Project P
+LEFT JOIN Task T
+ON P.Project_ID = T.Project_ID
+GROUP BY P.Project_ID, P.Project_Name;
+
+
+-- =========================================================
+-- 33. UPDATE PROJECT
+-- =========================================================
+
+UPDATE Project
+SET Status = 'Completed'
+WHERE Project_ID = 302;
+
+
+-- =========================================================
+-- 34. UPDATE EMPLOYEE PHONE
+-- =========================================================
+
+UPDATE Employee
+SET Phone = '9999999999'
+WHERE Employee_ID = 101;
+
+
+-- =========================================================
+-- 35. DELETE A MILESTONE
+-- =========================================================
+
+DELETE FROM Milestone
+WHERE Milestone_ID = 604;
+
+
+-- =========================================================
+-- 36. DELETE A RESOURCE
+-- =========================================================
+
+DELETE FROM Resource
+WHERE Resource_ID = 704;
